@@ -1,0 +1,17 @@
+name: m3env
+channels:
+    - defaults
+    - pytorch
+    - esiravegna 
+dependencies:
+    - python>=3.6
+    - pytorch
+    - numpy>=1.13
+    - tqdm
+    - Pillow
+    - torchvision>=0.2.2
+    - requests
+    - pandas>=0.20
+    - pip
+    - pip:
+        - pycld2>=0.31 

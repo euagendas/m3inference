@@ -1,0 +1,2 @@
+include README.md
+recursive-include m3inference/data *
