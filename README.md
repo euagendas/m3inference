@@ -111,11 +111,12 @@ If you have a Twitter JSON object representing a user but do *not* have images r
 
 ```
 from m3inference import M3Twitter
+import pprint
 
-m3twitter=M3Twitter() #Change the model_dir parameter if you want images downloaded somewhere other than ~/m3/cache
-m3twitter.transform_jsonl(input_file="twitter_data.jsonl",output_file="m3_input_data.jsonl")
+m3twitter=M3Twitter(cache_dir="twitter_cache") #Change the cache_dir parameter to control where profile images are downloaded
+m3twitter.transform_jsonl(input_file="twitter_cache/example_tweets.jsonl",output_file="twitter_cache/m3_input.jsonl")
 
-m3twitter.infer(data="m3_input_data.jsonl") #Same method as M3Inference.infer(...)
+pprint.pprint(m3twitter.infer("twitter_cache/m3_input.jsonl")) #Same method as M3Inference.infer(...)
 ```
 
 If you already have images locally, please include the ``image_path_key`` parameter and set it to the key in your JSON object containing the path to the image locally. Similarly, if you have detected languages, you can use the ``lang_key`` parameter. An example is given in `test/test_transform_jsonl.py`
@@ -132,8 +133,8 @@ You can use the M3Twitter class to get all the needed profile information (and i
 ```
 import pprint
 from m3inference import M3Twitter
-m3Twitter=M3Twitter()
-pprint.pprint(m3Twitter.infer_id("2631881902"))
+m3twitter=M3Twitter()
+pprint.pprint(m3twitter.infer_id("2631881902"))
 ```
 
 The `.infer_screen_name(...)`  method does the same for a Twitter screen name. All results are stored/cached in "~/m3/cache/". This directory can be changed in the M3Twitter constructor and you can skip/update the cache for a single request by setting `skip_cache=True` on the `.infer_id(...)` or `.infer_screen_name(...)` method.
