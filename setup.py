@@ -1,7 +1,7 @@
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+with open('README.md') as f:
+    long_description = f.read()
 
 with open('requirements.txt') as f:
     reqs = f.read()
@@ -16,7 +16,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.6",
     install_requires=reqs.strip().split('\n'),
-    url="https://github.com/zijwang/m3inference",
+    url="https://github.com/euagendas/m3inference",
     include_package_data=True,
     packages=setuptools.find_packages()
 
