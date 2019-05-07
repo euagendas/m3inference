@@ -173,3 +173,8 @@ Please cite our WWW 2019 paper if you use this package in your project.
 ## More Questions
 
 Please contact Zijian Wang at `zijwang@stanford.edu` if you have questions or suggestions regarding this package. 
+
+## License
+
+This source code is licensed under the GNU Affero General Public License.
+Please see the LICENSE file in the root directory of this source tree for details.
