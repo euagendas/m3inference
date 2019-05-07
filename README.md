@@ -114,9 +114,9 @@ from m3inference import M3Twitter
 import pprint
 
 m3twitter=M3Twitter(cache_dir="twitter_cache") #Change the cache_dir parameter to control where profile images are downloaded
-m3twitter.transform_jsonl(input_file="twitter_cache/example_tweets.jsonl",output_file="twitter_cache/m3_input.jsonl")
+m3twitter.transform_jsonl(input_file="test/twitter_cache/example_tweets.jsonl",output_file="test/twitter_cache/m3_input.jsonl")
 
-pprint.pprint(m3twitter.infer("twitter_cache/m3_input.jsonl")) #Same method as M3Inference.infer(...)
+pprint.pprint(m3twitter.infer("test/twitter_cache/m3_input.jsonl")) #Same method as M3Inference.infer(...)
 ```
 
 If you already have images locally, please include the ``image_path_key`` parameter and set it to the key in your JSON object containing the path to the image locally. Similarly, if you have detected languages, you can use the ``lang_key`` parameter. An example is given in `test/test_transform_jsonl.py`
