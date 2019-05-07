@@ -8,6 +8,7 @@ This is a PyTorch implementation of the M3 (Multimodal, Multilingual, and Multi-
 - [FAQs](#faqs)
 - [Citation](#citation)
 - [Contact](#more-questions)
+- [License](#license)
 
 ## About
 M3 is a deep learning system for demographic inference that was trained on massive Twitter dataset. It features three major attributes:
