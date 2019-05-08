@@ -49,7 +49,7 @@ EMB = pickle.load(open(os.path.join(os.path.dirname(__file__), "data", "emb.pkl"
 
 PRED_CATS = {
     'gender': ['male', 'female'],
-    'age': ['<=18', '18-29', '30-39', '>=40'],
+    'age': ['<=18', '19-29', '30-39', '>=40'],
     'org': ['non-org', 'is-org']
 }
 
