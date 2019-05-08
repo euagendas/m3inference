@@ -173,9 +173,8 @@ Please cite our WWW 2019 paper if you use this package in your project.
 
 ## More Questions
 
-Please contact Zijian Wang at `zijwang@stanford.edu` if you have questions or suggestions regarding this package. 
+We use issues on this GitHub for all questions or suggestions.  For specific inqueries, please contact us as `hello@euagendas.org`.  Please note that we are unable to release or provide training data for this model due to existing terms of service.
 
 ## License
 
-This source code is licensed under the GNU Affero General Public License.
-Please see the LICENSE file in the root directory of this source tree for details.
+This source code is licensed under the GNU Affero General Public License, which allows for non-commercial re-use of this software.  For commercial inqueries, please contact us directly. Please see the LICENSE file in the root directory of this source tree for details.
