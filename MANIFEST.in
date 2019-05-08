@@ -1,3 +1,4 @@
 include README.md
 include requirements.txt
+include LICENSE
 recursive-include m3inference/data *
