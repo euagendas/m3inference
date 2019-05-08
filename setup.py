@@ -6,12 +6,9 @@ with open('README.md') as f:
 with open('requirements.txt') as f:
     reqs = f.read()
 
-with open('LICENSE') as f:
-    license = f.read()
-
 setuptools.setup(
     name='m3inference',
-    version='1.0',
+    version='1.0.1',
     author='Zijian Wang et al.',
     author_email='zijwang@stanford.edu',
     description='M3 Inference',
@@ -21,7 +18,7 @@ setuptools.setup(
     install_requires=reqs.strip().split('\n'),
     url='https://github.com/euagendas/m3inference',
     include_package_data=True,
-    license=license,
+    license='AGPL v3',
     packages=setuptools.find_packages()
 
 )
