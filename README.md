@@ -72,14 +72,14 @@ You should see results like the following:
 
 ```
 OrderedDict([('720389270335135745',
-              {'age': {'18-29': 0.1546,
+              {'age': {'19-29': 0.1546,
                        '30-39': 0.114,
                        '<=18': 0.0481,
                        '>=40': 0.6833},
                'gender': {'female': 0.0066, 'male': 0.9934},
                'org': {'is-org': 0.7508, 'non-org': 0.2492}}),
              ('21447363',
-              {'age': {'18-29': 0.0157,
+              {'age': {'19-29': 0.0157,
                        '30-39': 0.9837,
                        '<=18': 0.0004,
                        '>=40': 0.0002},
@@ -173,9 +173,8 @@ Please cite our WWW 2019 paper if you use this package in your project.
 
 ## More Questions
 
-Please contact Zijian Wang at `zijwang@stanford.edu` if you have questions or suggestions regarding this package. 
+We use issues on this GitHub for all questions or suggestions.  For specific inqueries, please contact us as `hello@euagendas.org`.  Please note that we are unable to release or provide training data for this model due to existing terms of service.
 
 ## License
 
-This source code is licensed under the GNU Affero General Public License.
-Please see the LICENSE file in the root directory of this source tree for details.
+This source code is licensed under the GNU Affero General Public License, which allows for non-commercial re-use of this software.  For commercial inqueries, please contact us directly. Please see the LICENSE file in the root directory of this source tree for details.
