@@ -26,7 +26,7 @@ class M3Twitter(M3Inference):
     _RE_BIO = re.compile('<p class="note">(.*?)</p>', re.DOTALL)
     _TAG_RE = re.compile(r'<[^>]+>')
     # _SCREEN_NAME=re.compile('<span class="nickname">@(.*?)</span>')
-    _NAME_SCREEN_NAME = re.compile(r'<title>(.*?) \(@(.*?)\) on Twitter</title>')
+    _NAME_SCREEN_NAME = re.compile(r'<title>(.*?) \(@(.*?)\)')
 
     def __init__(self, cache_dir=expanduser("~/m3/cache"), model_dir=expanduser("~/m3/models/"), pretrained=True,
                  use_full_model=True, use_cuda=True, parallel=False, seed=0):
