@@ -11,10 +11,10 @@ This is a PyTorch implementation of the M3 (Multimodal, Multilingual, and Multi-
 - [License](#license)
 
 ## About
-M3 is a deep learning system for demographic inference that was trained on massive Twitter dataset. It features three major attributes:
+M3 is a deep learning system for demographic inference that was trained on a massive Twitter dataset. It features three major attributes:
 
 * Multimodal
-    - M3 takes both vision and text inputs. Particularly, the input may contain a profile image, a name (e.g., in the form of a natural language first and last name) , a screen name, and a short self-descriptive text, e.g., a Twitter biography.
+    - M3 takes both vision and text inputs. Particularly, the input may contain a profile image, a name (e.g., in the form of a natural language first and last name), a user name (e.g., the Twitter screen_name), and a short self-descriptive text (e.g., a Twitter biography).
  
 * Multilingual
     - M3 operates in 32 major languages spoken in Europe. They are `['en', 'cs', 'fr', 'nl', 'ar', 'ro', 'bs', 'da', 'it', 'pt', 'no', 'es', 'hr', 'tr', 'de', 'fi', 'el', 'he',
