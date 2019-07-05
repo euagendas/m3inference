@@ -20,6 +20,12 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
 
 logger = logging.getLogger(__name__)
 
+def get_extension(img_path):
+    dotpos = img_path.rfind(".")
+    extension = img_path[dotpos + 1:]
+    if extension.lower() == "gif":
+        return "png"
+    return extension
 
 class M3Twitter(M3Inference):
     _RE_IMG = re.compile('<img class="photo" src="https://pbs.twimg.com/profile_images/(.*?)".*?>(.*?)</a>', re.DOTALL)
@@ -64,16 +70,14 @@ class M3Twitter(M3Inference):
         if img_path_key != None and img_path_key in user:
             img_path = user[img_path_key]
             if resize_img:
-                dotpos = img_path.rfind(".")
-                img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], img_path[dotpos + 1:])
+                img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], get_extension(img_path))
                 download_resize_img(img_path, img_file_resize)
             else:
                 img_file_resize = img_path
         elif img_path_key != None and img_path_key in input:
             img_path = input[img_path_key]
             if resize_img:
-                dotpos = img_path.rfind(".")
-                img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], img_path[dotpos + 1:])
+                img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], get_extension(img_path))
                 download_resize_img(img_path, img_file_resize)
             else:
                 img_file_resize = img_path
@@ -85,7 +89,7 @@ class M3Twitter(M3Inference):
             img_path = img_path.replace("_normal", "_400x400")
             dotpos = img_path.rfind(".")
             img_file_full = "{}/{}.{}".format(self.cache_dir, user["id_str"], img_path[dotpos + 1:])
-            img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], img_path[dotpos + 1:])
+            img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], get_extension(img_path))
             if not os.path.isfile(img_file_resize):
                 if keep_full_size_img:
                     download_resize_img(img_path, img_file_resize, img_file_full)
@@ -209,7 +213,7 @@ class M3Twitter(M3Inference):
             img = img.replace("_200x200", "_400x400")
             dotpos = img.rfind(".")
             img_file_full = "{}/{}.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
-            img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
+            img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, get_extension(img))
             download_resize_img(img, img_file_resize, img_file_full)
         if len(bio) == 0:
             bio = ""
