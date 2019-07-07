@@ -173,7 +173,7 @@ Please cite our WWW 2019 paper if you use this package in your project.
 
 ## More Questions
 
-We use issues on this GitHub for all questions or suggestions.  For specific inqueries, please contact us at `hello@euagendas.org`.  Please note that we are unable to release or provide training data for this model due to existing terms of service.
+We use issues on this GitHub for all questions or suggestions.  For specific inqueries, please contact us at `m3@euagendas.org`.  Please note that we are unable to release or provide training data for this model due to existing terms of service.
 
 ## License
 
