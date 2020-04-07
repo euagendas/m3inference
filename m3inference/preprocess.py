@@ -31,7 +31,7 @@ def download_resize_img(url, img_out_path, img_out_path_fullsize=None):
         logger.warn("Error fetching profile image from Twitter. HTTP error code was {}.".format(err.code))
         raise err
 
-    return resize_img(BytesIO(img_data), img_out_path)
+    return resize_img(BytesIO(img_data), img_out_path, force=True)
 
 
 def resize_img(img_path, img_out_path, filter=Image.BILINEAR, force=False):
