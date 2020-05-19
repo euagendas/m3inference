@@ -29,21 +29,21 @@ def download_resize_img(url, img_out_path, img_out_path_fullsize=None):
                 fh.write(img_data)
     except urllib.error.HTTPError as err:
         logger.warn("Error fetching profile image from Twitter. HTTP error code was {}.".format(err.code))
-        raise err
+        return None
 
-    return resize_img(BytesIO(img_data), img_out_path, force=True)
+    return resize_img(BytesIO(img_data), img_out_path, force=True,url=url)
 
 
-def resize_img(img_path, img_out_path, filter=Image.BILINEAR, force=False):
+def resize_img(img_path, img_out_path, filter=Image.BILINEAR, force=False,url=None):
     try:
         img = Image.open(img_path).convert("RGB")
         if img.size[0] + img.size[1] < 400 and not force:
-            logger.info(f'{img_path} is too small. Skip.')
+            logger.info(f'{img_path} / {url} is too small. Skip.')
             return
         img = img.resize((224, 224), filter)
         img.save(img_out_path)
     except Exception as e:
-        logger.warning(f'Error when resizing {img_path}\nThe error message is {e}\n')
+        logger.warning(f'Error when resizing {img_path} / {url}\nThe error message is {e}\n')
 
 
 def resize_imgs(src_root, dest_root, src_list=None, filter=Image.BILINEAR, force=False):
