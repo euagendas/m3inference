@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 def get_extension(img_path):
     dotpos = img_path.rfind(".")
     extension = img_path[dotpos + 1:]
-    #if extension.lower() == "gif":
-    #    return "png"
+    if extension.lower() == "gif":
+        return "png"
     return extension
 
 class M3Twitter(M3Inference):
