@@ -123,8 +123,22 @@ pprint.pprint(m3twitter.infer("test/twitter_cache/m3_input.jsonl")) #Same method
 If you already have images locally, please include the ``image_path_key`` parameter and set it to the key in your JSON object containing the path to the image locally. Similarly, if you have detected languages, you can use the ``lang_key`` parameter. An example is given in `test/test_transform_jsonl.py`
 
 ##### Nothing but a screen_name or numeric id
-You can also run the Twitter wrapper directly for a Twitter screen_name or numeric id. From the command line, this looks like:
+You can also run the Twitter wrapper directly for a Twitter screen_name or numeric id.
 
+* Please download the "scripts" folders from this repository. 
+* To run these examples, you need Twitter API credentials. Please create a Twitter app at https://developer.twitter.com/en/apps . Once you have an app, copy `auth_example.txt` to  `auth.txt` and insert the API key, API secret, access token, and access token secret into this file.
+
+Then you can run the following commands:
+
+```
+#If you have a screen_name, use
+$ python m3twitter.py --screen-name=computermacgyve --auth auth.txt --skip-cache
+
+#If you have a numeric id, use
+$python m3twitter.py --id=19854920 --auth auth.txt --skip-cache
+```
+
+The `--skip-cache` option ensures fresh results are retrieved rather than served from the cache. This is great for debugging but not in a real-world setting; so, remove as needed.
 
 ## FAQs
 ### What if I just have a Twitter screen name or id?
@@ -135,6 +149,7 @@ You can use the M3Twitter class to get all the needed profile information (and i
 import pprint
 from m3inference import M3Twitter
 m3twitter=M3Twitter()
+m3twitter.twitter_init(api_key=...,api_secret=...,access_token=...,access_secret=...)
 pprint.pprint(m3twitter.infer_id("2631881902"))
 ```
 
@@ -142,7 +157,7 @@ The `.infer_screen_name(...)`  method does the same for a Twitter screen name. A
 
 You can also run these examples directly from the terminal to try things out:
 ```
-python scripts/m3twitter.py --screen-name=barackobama
+python scripts/m3twitter.py --screen-name=barackobama --auth auth.txt
 ```
 
 ### How should I get the images?
