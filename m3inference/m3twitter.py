@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # @Scott Hale
 
+import configparser
 import html
 import json
 import logging
@@ -139,7 +140,17 @@ class M3Twitter(M3Inference):
             json.dump(output, fh)
         return output
 
-    def twitter_init(self,api_key,api_secret,access_token,access_secret):
+    
+    def twitter_init_from_file(self, auth_file):
+        with open(auth_file, "r") as fh:
+            config_string = '[DEFAULT]\n' + fh.read()
+            config = configparser.ConfigParser()
+            config.read_string(config_string)
+            twcfg=dict(config.items("DEFAULT"))
+        return self.twitter_init(**twcfg)
+    
+    
+    def twitter_init(self, api_key, api_secret, access_token, access_secret):
         twitter = OAuth1Service(
             consumer_key=api_key,
             consumer_secret=api_secret,
@@ -160,14 +171,14 @@ class M3Twitter(M3Inference):
             try:
                 r=self.twitter_session.get("users/show.json",params={"screen_name":screen_name})
             except:
-                logger.warning("Invalid resonse from Twitter")
+                logger.warning("Invalid response from Twitter")
                 return None
         elif id!=None:
             logger.info("GET /users/show.json?id={}".format(id))
             try:
                 r=self.twitter_session.get("users/show.json",params={"id":id})
             except:
-                logger.warning("Invalid resonse from Twitter")
+                logger.warning("Invalid response from Twitter")
                 return None
         else:
             logger.fatal("No id or screen_name")

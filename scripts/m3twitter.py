@@ -27,12 +27,7 @@ if __name__ == "__main__":
 
     m3Twitter = M3Twitter()
     
-    with open(args.auth, "r") as fh:
-        config_string = '[DEFAULT]\n' + fh.read()
-        config = configparser.ConfigParser()
-        config.read_string(config_string)
-        twcfg=dict(config.items("DEFAULT"))
-        m3Twitter.twitter_init(**twcfg)
+    m3Twitter.twitter_init_from_file(args.auth)
 
     if args.id != None:
         pprint.pprint(m3Twitter.infer_id(args.id, skip_cache=args.skip_cache))
