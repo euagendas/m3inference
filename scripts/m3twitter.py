@@ -5,10 +5,12 @@ from m3inference import M3Twitter
 import pprint
 import argparse
 import sys
+import configparser
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Retreive profile information for a Twitter screen_name or numeric user id and run m3 inference. You must supply exactly ONE of --id or --screen-name')
+    parser.add_argument('--auth', help='A file with Twitter API credentials (see README)', required=True)
     parser.add_argument('--id', help='The numeric id of a Twitter user')
     parser.add_argument('--screen-name',
                         help='The screen_name of a Twitter user (i.e., everything following the @, but do not include @ itself)')
@@ -24,6 +26,9 @@ if __name__ == "__main__":
         quit(1)
 
     m3Twitter = M3Twitter()
+    
+    m3Twitter.twitter_init_from_file(args.auth)
+
     if args.id != None:
         pprint.pprint(m3Twitter.infer_id(args.id, skip_cache=args.skip_cache))
     else:

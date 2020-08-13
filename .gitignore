@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#Twitter credentials
+/scripts/auth.txt
+

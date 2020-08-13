@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # @Scott Hale
 
+import configparser
 import html
 import json
 import logging
 import os
-import re
-import urllib.request
+from rauth import OAuth1Service
 from os.path import expanduser
 
 from .consts import UNKNOWN_LANG, TW_DEFAULT_PROFILE_IMG
@@ -28,17 +28,13 @@ def get_extension(img_path):
     return extension
 
 class M3Twitter(M3Inference):
-    _RE_IMG = re.compile('<img class="photo" src="https://pbs.twimg.com/profile_images/(.*?)".*?>(.*?)</a>', re.DOTALL)
-    _RE_BIO = re.compile('<p class="note">(.*?)</p>', re.DOTALL)
-    _TAG_RE = re.compile(r'<[^>]+>')
-    # _SCREEN_NAME=re.compile('<span class="nickname">@(.*?)</span>')
-    _NAME_SCREEN_NAME = re.compile(r'<title>(.*?) \(@(.*?)\)')
 
     def __init__(self, cache_dir=expanduser("~/m3/cache"), model_dir=expanduser("~/m3/models/"), pretrained=True,
                  use_full_model=True, use_cuda=True, parallel=False, seed=0):
         super(M3Twitter, self).__init__(model_dir=model_dir, pretrained=pretrained, use_full_model=use_full_model,
                                         use_cuda=use_cuda, parallel=parallel, seed=seed)
         self.cache_dir = cache_dir
+        self.twitter_session=None
         if not os.path.isdir(self.cache_dir):
             logger.info(f'Dir {self.cache_dir} does not exist. Creating now.')
             os.makedirs(self.cache_dir)
@@ -139,19 +135,57 @@ class M3Twitter(M3Inference):
         else:
             logger.info("skip_cache is True. Fetching data from Twitter for {}.".format(screen_name))
 
-        try:
-            data = urllib.request.urlopen("https://twitter.com/intent/user?screen_name={}".format(screen_name))
-            data = data.read().decode("UTF-8")
-        except urllib.error.HTTPError as err:
-            logger.warning(
-                "skip_cache is TrueError fetching data from Twitter. HTTP error code was {}. 404 usually indicates the screen_name is invalid.".format(
-                    err.code))
-            raise err
-
-        output = self.process_twitter(data, screen_name=screen_name)
+        output = self._twitter_api(screen_name=screen_name)
         with open("{}/{}.json".format(self.cache_dir, screen_name), "w") as fh:
             json.dump(output, fh)
         return output
+
+    
+    def twitter_init_from_file(self, auth_file):
+        with open(auth_file, "r") as fh:
+            config_string = '[DEFAULT]\n' + fh.read()
+            config = configparser.ConfigParser()
+            config.read_string(config_string)
+            twcfg=dict(config.items("DEFAULT"))
+        return self.twitter_init(**twcfg)
+    
+    
+    def twitter_init(self, api_key, api_secret, access_token, access_secret):
+        twitter = OAuth1Service(
+            consumer_key=api_key,
+            consumer_secret=api_secret,
+            request_token_url='https://api.twitter.com/oauth/request_token',
+            access_token_url='https://api.twitter.com/oauth/access_token',
+            authorize_url='https://api.twitter.com/oauth/authorize',
+            base_url='https://api.twitter.com/1.1/')
+        self.twitter_session = twitter.get_session(token=[access_token,access_secret])
+        return True
+
+    def _twitter_api(self,id=None,screen_name=None):
+        if self.twitter_session==None:
+            logger.fatal("You must call twitter_init(...) before using this method. Please see https://github.com/euagendas/m3inference/blob/master/README.md for details.")
+            return None
+
+        if screen_name!=None:
+            logger.info("GET /users/show.json?screen_name={}".format(screen_name))
+            try:
+                r=self.twitter_session.get("users/show.json",params={"screen_name":screen_name})
+            except:
+                logger.warning("Invalid response from Twitter")
+                return None
+        elif id!=None:
+            logger.info("GET /users/show.json?id={}".format(id))
+            try:
+                r=self.twitter_session.get("users/show.json",params={"id":id})
+            except:
+                logger.warning("Invalid response from Twitter")
+                return None
+        else:
+            logger.fatal("No id or screen_name")
+            return None
+        
+        return self.process_twitter(r.json())
+
 
     def infer_id(self, id, skip_cache=False):
         """
@@ -171,69 +205,58 @@ class M3Twitter(M3Inference):
         else:
             logger.info("skip_cache is True. Fetching data from Twitter for id {}.".format(id))
 
-        try:
-            data = urllib.request.urlopen("https://twitter.com/intent/user?user_id={}".format(id))
-            data = data.read().decode("UTF-8")
-        except urllib.error.HTTPError as err:
-            logger.warning(
-                "Error fetching data from Twitter. HTTP error code was {}. 404 usually indicates the id is invalid.".format(
-                    err.code))
-            raise err
-
-        output = self.process_twitter(data, id=id)
+        output=self._twitter_api(id=id)
         with open("{}/{}.json".format(self.cache_dir, id), "w") as fh:
             json.dump(output, fh)
         return output
 
-    def process_twitter(self, data, screen_name=None, id=None):
-        img = M3Twitter._RE_IMG.findall(data)
-        bio = M3Twitter._RE_BIO.findall(data)
-        name_screen_name = M3Twitter._NAME_SCREEN_NAME.findall(data)
-
-        if len(name_screen_name) == 0:
-            logger.warning("Could not retreive the name or screen_name.")
-            name = ""
-            if screen_name == None:
-                screen_name = ""
+    def _get_twitter_attrib(self,key,data):
+        if key in data:
+            return data[key]
         else:
-            screen_name_parsed = name_screen_name[0][1].lower()
-            name = name_screen_name[0][0]
-            if screen_name == None:
-                screen_name = screen_name_parsed
-            elif screen_name_parsed != screen_name:
-                logger.info(
-                    "screen_name from Twitter does not match supplied screen_name. Using user-supplied screen_name. Twiter value is {}. User-supplied value is {}".format(
-                        screen_name_parsed, screen_name))
+            logger.warning("Could not retreive {}".format(key))
+            return ""
 
-        if len(img) == 0:
+    def process_twitter(self, data):
+        
+        screen_name=self._get_twitter_attrib("screen_name",data)
+        id=self._get_twitter_attrib("id_str",data)
+        bio=self._get_twitter_attrib("description",data)
+        name=self._get_twitter_attrib("name",data)
+        img=self._get_twitter_attrib("profile_image_url",data)
+        
+        if id=="":
+            id="dummy" #Can be anything since batch is of size 1
+
+        if bio == "":
+            lang = UNKNOWN_LANG
+        else:
+            lang = get_lang(bio)
+        
+        if img=="":
             logger.warning("Unable to extract image from Twitter. Using default image.")
             img_file_resize = TW_DEFAULT_PROFILE_IMG
         else:
-            img = "https://pbs.twimg.com/profile_images/{}".format(img[0][0])
             img = img.replace("_200x200", "_400x400")
+            img = img.replace("_normal", "_400x400")
             dotpos = img.rfind(".")
             img_file_full = "{}/{}.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, get_extension(img))
             download_resize_img(img, img_file_resize, img_file_full)
-        if len(bio) == 0:
-            bio = ""
-            logger.warning("No bio available from Twitter")
-        else:
-            bio = html.unescape(M3Twitter._TAG_RE.sub('', bio[0]))
 
         data = [{
             "description": bio,
-            "id": id if id != None else screen_name,
+            "id": id,
             "img_path": img_file_resize,
-            "lang": get_lang(bio),
+            "lang": lang,
             "name": name,
-            "screen_name": screen_name
+            "screen_name": screen_name,
         }]
 
         pred = self.infer(data, batch_size=1, num_workers=1)
 
         output = {
             "input": data[0],
-            "output": pred[id if id != None else screen_name]
+            "output": pred[id]
         }
         return output

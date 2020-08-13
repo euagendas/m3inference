@@ -6,3 +6,4 @@ torchvision>=0.2.2
 pycld2>=0.31
 requests
 pandas>=0.20
+rauth
