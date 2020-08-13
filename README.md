@@ -126,7 +126,7 @@ If you already have images locally, please include the ``image_path_key`` parame
 You can also run the Twitter wrapper directly for a Twitter screen_name or numeric id.
 
 * Please download the "scripts" folders from this repository. 
-* To run these examples, you need Twitter API credentials. Please create a Twitter app at https://developer.twitter.com/en/apps . Once you have an app, copy `auth_example.txt` to  `auth.txt` and insert the API key, API secret, access token, and access token secret into this file.
+* To run these examples, you need Twitter API credentials. Please create a Twitter app at https://developer.twitter.com/en/apps . Once you have an app, copy `scripts/auth_example.txt` to  `auth.txt` and insert the API key, API secret, access token, and access token secret into this file.
 
 Then you can run the following commands:
 
@@ -149,7 +149,12 @@ You can use the M3Twitter class to get all the needed profile information (and i
 import pprint
 from m3inference import M3Twitter
 m3twitter=M3Twitter()
+
+# initialize twitter api
 m3twitter.twitter_init(api_key=...,api_secret=...,access_token=...,access_secret=...)
+# alternatively, you may do
+m3twitter.twitter_init_from_file('auth.txt')
+
 pprint.pprint(m3twitter.infer_id("2631881902"))
 ```
 
