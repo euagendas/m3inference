@@ -240,7 +240,7 @@ class M3Twitter(M3Inference):
             img_file_resize = TW_DEFAULT_PROFILE_IMG
         else:
             img_path = img_path.replace("_200x200", "_400x400").replace("_normal", "_400x400")
-            img_file_full = f"{self.cache_dir}/{id}" + (f".{img_path[img_path.rfind('.') + 1:]}" if '.' in img_path.split('/')[-1] else ''
+            img_file_full = f"{self.cache_dir}/{id}" + (f".{img_path[img_path.rfind('.') + 1:]}" if '.' in img_path.split('/')[-1] else '')
             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, id, get_extension(img_path))
 #             img_file_full = "{}/{}.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
 #             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, get_extension(img))
