@@ -21,6 +21,8 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
 logger = logging.getLogger(__name__)
 
 def get_extension(img_path):
+    if '.' not in img_path.split('/')[-1]:
+        return 'png'
     dotpos = img_path.rfind(".")
     extension = img_path[dotpos + 1:]
     if extension.lower() == "gif":
@@ -223,7 +225,7 @@ class M3Twitter(M3Inference):
         id=self._get_twitter_attrib("id_str",data)
         bio=self._get_twitter_attrib("description",data)
         name=self._get_twitter_attrib("name",data)
-        img=self._get_twitter_attrib("profile_image_url",data)
+        img_path=self._get_twitter_attrib("profile_image_url",data)
         
         if id=="":
             id="dummy" #Can be anything since batch is of size 1
@@ -233,16 +235,16 @@ class M3Twitter(M3Inference):
         else:
             lang = get_lang(bio)
         
-        if img=="":
+        if img_path=="":
             logger.warning("Unable to extract image from Twitter. Using default image.")
             img_file_resize = TW_DEFAULT_PROFILE_IMG
         else:
-            img = img.replace("_200x200", "_400x400")
-            img = img.replace("_normal", "_400x400")
-            dotpos = img.rfind(".")
-            img_file_full = "{}/{}.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
-            img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, get_extension(img))
-            download_resize_img(img, img_file_resize, img_file_full)
+            img_path = img_path.replace("_200x200", "_400x400").replace("_normal", "_400x400")
+            img_file_full = f"{self.cache_dir}/{id}" + (f".{img_path[img_path.rfind('.') + 1:]}" if '.' in img_path.split('/')[-1] else ''
+            img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, id, get_extension(img_path))
+#             img_file_full = "{}/{}.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
+#             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, get_extension(img))
+            download_resize_img(img_path, img_file_resize, img_file_full)
 
         data = [{
             "description": bio,
