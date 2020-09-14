@@ -226,7 +226,6 @@ class M3Twitter(M3Inference):
         bio=self._get_twitter_attrib("description",data)
         name=self._get_twitter_attrib("name",data)
         img_path=self._get_twitter_attrib("profile_image_url",data)
-        
         if id=="":
             id="dummy" #Can be anything since batch is of size 1
 
@@ -235,7 +234,7 @@ class M3Twitter(M3Inference):
         else:
             lang = get_lang(bio)
         
-        if img_path=="":
+        if img_path=="" or "default_profile" in img_path:
             logger.warning("Unable to extract image from Twitter. Using default image.")
             img_file_resize = TW_DEFAULT_PROFILE_IMG
         else:
