@@ -4,7 +4,7 @@ channels:
     - pytorch
     - esiravegna 
 dependencies:
-    - python>=3.6
+    - python>=3.6.6
     - pytorch
     - numpy>=1.13
     - tqdm
