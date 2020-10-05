@@ -28,12 +28,13 @@ M3 is a deep learning system for demographic inference that was trained on a mas
 `pip install m3inference`
 
 * If there is an error with the installation of `torch`, you may install it with `conda` (see [here](https://pytorch.org/)). Alternatively, you could create a conda environment - see instructions below.
+* Please ensure you have Python 3.6.6 or higher installed.
 
 ### Manually Install
 
 
 #### With pip
-You must have `Python>=3.6` and `pip` ready to use. Then you can:
+You must have `Python>=3.6.6` and `pip` ready to use. Then you can:
 1. Install dependency packages: `pip install -r requirements.txt`
 2. Install the package `python setup.py install`
 
