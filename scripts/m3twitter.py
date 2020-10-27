@@ -6,8 +6,10 @@ import pprint
 import argparse
 import sys
 import configparser
+from multiprocessing import freeze_support
 
 if __name__ == "__main__":
+    freeze_support()
     parser = argparse.ArgumentParser(
         description='Retreive profile information for a Twitter screen_name or numeric user id and run m3 inference. You must supply exactly ONE of --id or --screen-name')
     parser.add_argument('--auth', help='A file with Twitter API credentials (see README)', required=True)
