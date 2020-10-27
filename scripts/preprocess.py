@@ -4,11 +4,12 @@
 import argparse
 import logging
 from m3inference.preprocess import resize_imgs, update_json
-
+from multiprocessing import freeze_support
 
 logger = logging.getLogger()
 
 if __name__ == "__main__":
+    freeze_support()
     parser = argparse.ArgumentParser()
     parser.add_argument('--source_dir', type=str, default=None, required=True,
                         help='The source dir that contains images that need to be resized')
