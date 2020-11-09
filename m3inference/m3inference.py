@@ -46,7 +46,7 @@ class M3Inference:
         self.model_type = 'full_model' if self.use_full_model else 'text_model'
         self.model_dir = model_dir
 
-        logger.info('Version 1.1.1')
+        logger.info('Version 1.1.2')
         logger.info(f'Running on {self.device.type}.')
 
         if not pretrained:
