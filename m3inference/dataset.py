@@ -4,7 +4,7 @@
 import unicodedata
 
 from PIL import Image
-from torch.utils.data import *
+from torch.utils.data import Dataset
 from torchvision import transforms
 
 from .utils import *
