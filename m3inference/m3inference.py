@@ -7,7 +7,7 @@ from os.path import expanduser
 
 import pandas as pd
 import torch.nn as nn
-from torch.utils.data import *
+from torch.utils.data import DataLoader
 
 from .consts import *
 from .dataset import M3InferenceDataset
