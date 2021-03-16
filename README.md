@@ -184,9 +184,10 @@ Please cite our WWW 2019 paper if you use this package in your project.
 
 ```
 @inproceedings{wang2019demographic,
-  title={Demographic Inference and Representative Population Estimates from Multilingual Social Media Data},
-  author={Wang, Zijian and Hale, Scott A. and Adelani, David and Grabowicz, Przemyslaw A. and Hartmann, Timo and Fl{\"o"}ck, Fabian and Jurgens, David},
-  booktitle={Proceedings of the 2019 World Wide Web Conference},
+  title={Demographic inference and representative population estimates from multilingual social media data},
+  author={Wang, Zijian and Hale, Scott and Adelani, David Ifeoluwa and Grabowicz, Przemyslaw and Hartman, Timo and Fl{\"o}ck, Fabian and Jurgens, David},
+  booktitle={The World Wide Web Conference},
+  pages={2056--2067},
   year={2019},
   organization={ACM}
 }
