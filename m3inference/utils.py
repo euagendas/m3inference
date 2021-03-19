@@ -44,7 +44,7 @@ def set_seed(seed=0):
 def pack_wrapper(sents, lengths):
     lengths_sorted, idx_sorted = lengths.sort(descending=True)
     sents_sorted = sents[idx_sorted]
-    packed = pack_padded_sequence(sents_sorted, lengths_sorted, batch_first=True)
+    packed = pack_padded_sequence(sents_sorted, lengths_sorted.cpu(), batch_first=True)
     return packed, idx_sorted
 
 
