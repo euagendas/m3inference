@@ -19,7 +19,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
 logger = logging.getLogger(__name__)
 
 
-def download_resize_img(url, img_out_path, img_out_path_fullsize=None):
+def download_resize_img(url, img_out_path, img_out_path_fullsize=None, debug=True):
     # url=url.replace("_200x200","_400x400")
     try:
         img_data = urllib.request.urlopen(url)
@@ -28,25 +28,28 @@ def download_resize_img(url, img_out_path, img_out_path_fullsize=None):
             with open(img_out_path_fullsize, "wb") as fh:
                 fh.write(img_data)
     except urllib.error.HTTPError as err:
-        logger.warn("Error fetching profile image from Twitter. HTTP error code was {}.".format(err.code))
+        if debug:
+            logger.warn("Error fetching profile image from Twitter. HTTP error code was {}.".format(err.code))
         return None
 
-    return resize_img(BytesIO(img_data), img_out_path, force=True,url=url)
+    return resize_img(BytesIO(img_data), img_out_path, force=True, url=url, debug=debug)
 
 
-def resize_img(img_path, img_out_path, filter=Image.BILINEAR, force=False,url=None):
+def resize_img(img_path, img_out_path, filter=Image.BILINEAR, force=False, url=None, debug=True):
     try:
         img = Image.open(img_path).convert("RGB")
         if img.size[0] + img.size[1] < 400 and not force:
-            logger.info(f'{img_path} / {url} is too small. Skip.')
+            if debug:
+                logger.info(f'{img_path} / {url} is too small. Skip.')
             return
         img = img.resize((224, 224), filter)
         img.save(img_out_path)
     except Exception as e:
-        logger.warning(f'Error when resizing {img_path} / {url}\nThe error message is {e}\n')
+        if debug:
+            logger.warning(f'Error when resizing {img_path} / {url}\nThe error message is {e}\n')
 
 
-def resize_imgs(src_root, dest_root, src_list=None, filter=Image.BILINEAR, force=False):
+def resize_imgs(src_root, dest_root, src_list=None, filter=Image.BILINEAR, force=False, debug=True):
     if not os.path.exists(src_root):
         raise FileNotFoundError(f"{src_root} does not exist.")
 
@@ -62,12 +65,14 @@ def resize_imgs(src_root, dest_root, src_list=None, filter=Image.BILINEAR, force
 
         img_name = os.path.splitext(os.path.relpath(img_path, src_root))[0]
         if not force and img_name in des_set:
-            logger.debug(f"{img_name} exists. Skipping...")
+            if debug:
+                logger.debug(f"{img_name} exists. Skipping...")
             continue
         else:
             out_path = os.path.join(dest_root, img_name) + '.jpeg'
-            logger.debug(f'{img_name} not found in {dest_root}. Resizing to {out_path}')
-            resize_img(img_path, out_path, filter=filter, force=force)
+            if debug:
+                logger.debug(f'{img_name} not found in {dest_root}. Resizing to {out_path}')
+            resize_img(img_path, out_path, filter=filter, force=force, debug=debug)
 
 
 def update_json(jsonl_filepath, jsonl_outfilepath, src_root, dest_root):

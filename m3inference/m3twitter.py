@@ -32,11 +32,15 @@ def get_extension(img_path):
 class M3Twitter(M3Inference):
 
     def __init__(self, cache_dir=expanduser("~/m3/cache"), model_dir=expanduser("~/m3/models/"), pretrained=True,
-                 use_full_model=True, use_cuda=True, parallel=False, seed=0):
+                 use_full_model=True, use_cuda=True, parallel=False, seed=0, debug=True):
         super(M3Twitter, self).__init__(model_dir=model_dir, pretrained=pretrained, use_full_model=use_full_model,
-                                        use_cuda=use_cuda, parallel=parallel, seed=seed)
+                                        use_cuda=use_cuda, parallel=parallel, seed=seed, debug=debug)
         self.cache_dir = cache_dir
         self.twitter_session=None
+
+        if not debug:
+            logger.disabled = True
+
         if not os.path.isdir(self.cache_dir):
             logger.info(f'Dir {self.cache_dir} does not exist. Creating now.')
             os.makedirs(self.cache_dir)
@@ -69,14 +73,14 @@ class M3Twitter(M3Inference):
             img_path = user[img_path_key]
             if resize_img:
                 img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], get_extension(img_path))
-                download_resize_img(img_path, img_file_resize)
+                download_resize_img(img_path, img_file_resize, self.debug)
             else:
                 img_file_resize = img_path
         elif img_path_key != None and img_path_key in input:
             img_path = input[img_path_key]
             if resize_img:
                 img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], get_extension(img_path))
-                download_resize_img(img_path, img_file_resize)
+                download_resize_img(img_path, img_file_resize, self.debug)
             else:
                 img_file_resize = img_path
         elif user["default_profile_image"]:
@@ -90,9 +94,9 @@ class M3Twitter(M3Inference):
             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, user["id_str"], get_extension(img_path))
             if not os.path.isfile(img_file_resize):
                 if keep_full_size_img:
-                    download_resize_img(img_path, img_file_resize, img_file_full)
+                    download_resize_img(img_path, img_file_resize, img_file_full, self.debug)
                 else:
-                    download_resize_img(img_path, img_file_resize)
+                    download_resize_img(img_path, img_file_resize, None, self.debug)
         bio = user["description"]
         if bio == None:
             bio = ""
@@ -126,6 +130,7 @@ class M3Twitter(M3Inference):
         screen_name = screen_name.lower()
         if screen_name[0] == "@":
             screen_name = screen_name[1:]
+
         if not skip_cache:
             # If a json file exists, we'll use that. Otherwise go get the data.
             try:
@@ -165,6 +170,7 @@ class M3Twitter(M3Inference):
 
     def _twitter_api(self,id=None,screen_name=None):
         if self.twitter_session==None:
+            logger.disabled = False
             logger.fatal("You must call twitter_init(...) before using this method. Please see https://github.com/euagendas/m3inference/blob/master/README.md for details.")
             return None
 
@@ -183,6 +189,7 @@ class M3Twitter(M3Inference):
                 logger.warning("Invalid response from Twitter")
                 return None
         else:
+            logger.disabled = False
             logger.fatal("No id or screen_name")
             return None
         
@@ -220,7 +227,6 @@ class M3Twitter(M3Inference):
             return ""
 
     def process_twitter(self, data):
-        
         screen_name=self._get_twitter_attrib("screen_name",data)
         id=self._get_twitter_attrib("id_str",data)
         bio=self._get_twitter_attrib("description",data)
@@ -237,13 +243,14 @@ class M3Twitter(M3Inference):
         if img_path=="" or "default_profile" in img_path:
             logger.warning("Unable to extract image from Twitter. Using default image.")
             img_file_resize = TW_DEFAULT_PROFILE_IMG
+
         else:
             img_path = img_path.replace("_200x200", "_400x400").replace("_normal", "_400x400")
             img_file_full = f"{self.cache_dir}/{id}" + (f".{img_path[img_path.rfind('.') + 1:]}" if '.' in img_path.split('/')[-1] else '')
             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, id, get_extension(img_path))
 #             img_file_full = "{}/{}.{}".format(self.cache_dir, screen_name, img[dotpos + 1:])
 #             img_file_resize = "{}/{}_224x224.{}".format(self.cache_dir, screen_name, get_extension(img))
-            download_resize_img(img_path, img_file_resize, img_file_full)
+            download_resize_img(img_path, img_file_resize, img_file_full, self.debug)
 
         data = [{
             "description": bio,

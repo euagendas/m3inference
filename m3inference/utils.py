@@ -67,7 +67,7 @@ def normalize_space(sent):
     return sent.replace("\t", " ").replace("\n", " ").replace("\r", " ")
 
 
-def fetch_pretrained_model(model_name, model_path):
+def fetch_pretrained_model(model_name, model_path, debug=True):
     # Edited from https://github.com/huggingface/pytorch-pretrained-BERT/blob/68a889ee43916380f26a3c995e1638af41d75066/pytorch_pretrained_bert/file_utils.py
     # TODO: check whether the license from huggingface works with ours
     assert model_name in PRETRAINED_MODEL_ARCHIVE_MAP
@@ -77,7 +77,8 @@ def fetch_pretrained_model(model_name, model_path):
     for idx, model_url in enumerate(model_urls):
         try:
             temp_file = tempfile.NamedTemporaryFile()
-            logger.info(f'{model_path} not found in cache, downloading from {model_url} to {temp_file.name}')
+            if debug:
+                logger.info(f'{model_path} not found in cache, downloading from {model_url} to {temp_file.name}')
 
             req = requests.get(model_url, stream=True)
             content_length = req.headers.get('Content-Length')
@@ -92,37 +93,46 @@ def fetch_pretrained_model(model_name, model_path):
             temp_file.seek(0)
             download_flag = True
         except Exception as e:
-            logger.warning(f'Download from {idx + 1}/{len(model_urls)} mirror failed with an exception of\n{str(e)}')
+            if debug:
+                logger.warning(f'Download from {idx + 1}/{len(model_urls)} mirror failed with an exception of\n{str(e)}')
             try:
                 temp_file.close()
             except Exception as e_file:
-                logger.warning(f'temp_file failed with an exception of \n{str(e_file)}')
+                if debug:
+                    logger.warning(f'temp_file failed with an exception of \n{str(e_file)}')
             continue
 
         if not download_flag:
-            logging.warning(f'Download from all mirrors failed. Please retry.')
+            if debug:
+                logging.warning(f'Download from all mirrors failed. Please retry.')
             return
 
-        logger.info(f'Model {model_name} was downloaded to a tmp file.')
-        logger.info(f'Copying tmp file to {model_path}.')
+        if debug:
+            logger.info(f'Model {model_name} was downloaded to a tmp file.')
+            logger.info(f'Copying tmp file to {model_path}.')
         with open(model_path, 'wb') as cache_file:
             shutil.copyfileobj(temp_file, cache_file)
-        logger.info(f'Copied tmp model file to {model_path}.')
+        if debug:
+            logger.info(f'Copied tmp model file to {model_path}.')
         temp_file.close()
 
-        if download_flag and check_file_md5(model_name, model_path):
+        if download_flag and check_file_md5(model_name, model_path, debug):
             break
 
 
-def check_file_md5(model_name, model_path):
+def check_file_md5(model_name, model_path, debug=True):
     assert model_name in PRETRAINED_MODEL_MD5_MAP
-    logger.info(f'Checking MD5 for model {model_name} at {model_path}')
+    if debug:
+        logger.info(f'Checking MD5 for model {model_name} at {model_path}')
     correct_md5 = PRETRAINED_MODEL_MD5_MAP[model_name]
     downloaded_md5 = hashlib.md5(open(model_path, 'rb').read()).hexdigest()
-    if correct_md5 == downloaded_md5:
-        logger.info('MD5s match.')
-        return True
-    else:
-        logger.error('MD5s mismatch. Consider clean your tmp dir (default: `./m3_tmp`) and retry,'
-                     ' or download from the link in our github repo.')
-        return False
+
+    matches = correct_md5 == downloaded_md5
+
+    if debug:
+        if matches:
+            logger.info('MD5s match.')
+        else:
+            logger.error('MD5s mismatch. Consider clean your tmp dir (default: `./m3_tmp`) and retry,'
+                    ' or download from the link in our github repo.')
+    return matches

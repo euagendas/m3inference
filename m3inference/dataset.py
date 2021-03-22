@@ -14,11 +14,16 @@ logger = logging.getLogger(__name__)
 
 class M3InferenceDataset(Dataset):
 
-    def __init__(self, data: list, use_img=True):
+    def __init__(self, data: list, use_img=True, debug=True):
 
         self.tensor_trans = transforms.ToTensor()
         self.use_img = use_img
         self.data = []
+        self.debug = debug
+
+        if not debug:
+            logger.disabled = True
+        
         for entry in data:
             entry = DotDict(entry)
             if use_img:
