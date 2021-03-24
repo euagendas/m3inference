@@ -28,7 +28,7 @@ class M3Inference:
     '''
 
     def __init__(self, model_dir=expanduser("~/m3/models/"), pretrained=True, use_full_model=True, use_cuda=True,
-                 parallel=False, seed=0, debug=True):
+                 parallel=False, seed=0):
         '''
         :param model_dir: the dir to cache/read cacahed model dump
         :param pretrained: whether to load pretrained weight
@@ -45,10 +45,6 @@ class M3Inference:
         self.use_full_model = use_full_model
         self.model_type = 'full_model' if self.use_full_model else 'text_model'
         self.model_dir = model_dir
-        self.debug = debug
-
-        if not debug:
-            logger.disabled = True
 
         logger.info('Version 1.1.2')
         logger.info(f'Running on {self.device.type}.')
@@ -86,7 +82,7 @@ class M3Inference:
         if not os.path.isfile(model_path):
             logger.info(f'Model {self.model_type} does not exist at {model_path}. Try to download it now.')
             if self.model_type in PRETRAINED_MODEL_ARCHIVE_MAP:
-                fetch_pretrained_model(self.model_type, model_path, self.debug)
+                fetch_pretrained_model(self.model_type, model_path)
                 self.load_model_weight(model_path)
             else:
                 logger.info(f"Model {self.model_type} is not in out pretrained model list. \
@@ -97,7 +93,7 @@ class M3Inference:
 
     def load_model_weight(self, model_path, need_check=False):
         if need_check:
-            check_file_md5(self.model_type, model_path, self.debug)
+            check_file_md5(self.model_type, model_path)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         logger.info(f'Loaded pretrained weight at {model_path}')
 
@@ -122,12 +118,11 @@ class M3Inference:
             # json object
             data = data_or_datapath
         # prediction
-        dataloader = DataLoader(M3InferenceDataset(data, use_img=self.use_full_model, debug=self.debug), batch_size,
+        dataloader = DataLoader(M3InferenceDataset(data, use_img=self.use_full_model), batch_size,
                                 num_workers=num_workers, pin_memory=True)
         y_pred = []
         with torch.no_grad():
-            batch_iterator = tqdm(dataloader, desc='Predicting...') if self.debug else dataloader
-            for batch in batch_iterator:
+            for batch in tqdm(dataloader, desc='Predicting...'):
                 batch = [i.to(self.device) for i in batch]
                 pred = self.model(batch)
                 y_pred.append([_pred.detach().cpu().numpy() for _pred in pred])
