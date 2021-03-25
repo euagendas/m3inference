@@ -82,7 +82,8 @@ def fetch_pretrained_model(model_name, model_path):
             req = requests.get(model_url, stream=True)
             content_length = req.headers.get('Content-Length')
             total = int(content_length) if content_length is not None else None
-            progress = tqdm(unit="KB", total=round(total / 1024))
+            disable_logging = logging.root.level >= logging.WARN
+            progress = tqdm(unit="KB", total=round(total / 1024), disable=disable_logging)
             for chunk in req.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
                     progress.update(1)

@@ -122,7 +122,8 @@ class M3Inference:
                                 num_workers=num_workers, pin_memory=True)
         y_pred = []
         with torch.no_grad():
-            for batch in tqdm(dataloader, desc='Predicting...'):
+            disable_logging = logging.root.level >= logging.WARN
+            for batch in tqdm(dataloader, desc='Predicting...', disable=disable_logging):
                 batch = [i.to(self.device) for i in batch]
                 pred = self.model(batch)
                 y_pred.append([_pred.detach().cpu().numpy() for _pred in pred])

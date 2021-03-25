@@ -58,7 +58,8 @@ def resize_imgs(src_root, dest_root, src_list=None, filter=Image.BILINEAR, force
     des_set = set([os.path.relpath(img_path, dest_root).replace('.jpeg', '')
                    for img_path in glob.glob(os.path.join(dest_root, '*'))])
 
-    for img_path in tqdm(src_list, desc='resizing images'):
+    disable_logging = logging.root.level >= logging.WARN
+    for img_path in tqdm(src_list, desc='resizing images', disable=disable_logging):
 
         img_name = os.path.splitext(os.path.relpath(img_path, src_root))[0]
         if not force and img_name in des_set:
