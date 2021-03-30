@@ -6,10 +6,11 @@ import pprint
 import argparse
 import sys
 import configparser
+import logging
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Retreive profile information for a Twitter screen_name or numeric user id and run m3 inference. You must supply exactly ONE of --id or --screen-name')
+        description='Retrieve profile information for a Twitter screen_name or numeric user id and run m3 inference. You must supply exactly ONE of --id or --screen-name')
     parser.add_argument('--auth', help='A file with Twitter API credentials (see README)', required=True)
     parser.add_argument('--id', help='The numeric id of a Twitter user')
     parser.add_argument('--screen-name',
@@ -17,6 +18,8 @@ if __name__ == "__main__":
     # parser.add_argument('--skip-cache', type=bool, nargs='?',const=True, default=False,help='By default all requests are cached to the local filesystem and not refetched. Include this flag to disable/overwrite any results already in the cache.')
     parser.add_argument('--skip-cache', dest='skip_cache', action='store_true',
                         help='By default all requests are cached to the local filesystem and not refetched. Include this flag to disable/overwrite any results already in the cache.')
+    parser.add_argument('--skip_logging', action='store_true', required=False, help='(Optional) Skip logging info if set.')
+
     parser.set_defaults(skip_cache=False)
     args = parser.parse_args()
     if (args.id == None) == (args.screen_name == None):
@@ -25,7 +28,7 @@ if __name__ == "__main__":
         parser.print_help(sys.stderr)
         quit(1)
 
-    m3Twitter = M3Twitter()
+    m3Twitter = M3Twitter(skip_logging=args.skip_logging)
     
     m3Twitter.twitter_init_from_file(args.auth)
 
