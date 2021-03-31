@@ -17,8 +17,7 @@ M3 is a deep learning system for demographic inference that was trained on a mas
     - M3 takes both vision and text inputs. Particularly, the input may contain a profile image, a name (e.g., in the form of a natural language first and last name), a user name (e.g., the Twitter screen_name), and a short self-descriptive text (e.g., a Twitter biography).
  
 * Multilingual
-    - M3 operates in 32 major languages spoken in Europe. They are `['en', 'cs', 'fr', 'nl', 'ar', 'ro', 'bs', 'da', 'it', 'pt', 'no', 'es', 'hr', 'tr', 'de', 'fi', 'el', 'he',
-         'ru', 'bg', 'hu', 'sk', 'et', 'pl', 'lv', 'sl', 'lt', 'ga', 'eu', 'mt', 'cy', 'rm', 'is', 'un']` in [ISO 639-1 two-letter codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (`un` stands for languages that are not in the list). 
+    - M3 operates in 32 major languages spoken in Europe, but note that these are not all "European" languages (e.g., Arabic is supported). They are `['en', 'cs', 'fr', 'nl', 'ar', 'ro', 'bs', 'da', 'it', 'pt', 'no', 'es', 'hr', 'tr', 'de', 'fi', 'el', 'ru', 'bg', 'hu', 'sk', 'et', 'pl', 'lv', 'sl', 'lt', 'ga', 'eu', 'mt', 'cy', 'rm', 'is', 'un']` in [ISO 639-1 two-letter codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (`un` stands for languages that are not in the list). A [list with the full names of the languages is on the wiki](https://github.com/euagendas/m3inference/wiki/Languages).
     
 * Multi-attribute
     - Thanks to multi-task learning, the model can predict three demographic attributes (gender, age, and human-vs-organization status) at the same time.
