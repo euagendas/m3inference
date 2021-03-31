@@ -22,13 +22,19 @@ if __name__ == "__main__":
                         help='(Optional) The path to write the updated jsonl file (must be used with `--json_filepath')
 
     parser.add_argument('--force', action='store_true', required=False,
-                        help='(Optional) Force resieing every image, even if it exists in the output_dir.')
+                        help='(Optional) Force resizing every image, even if it exists in the output_dir.')
 
-    parser.add_argument('--verbose', action='store_true', required=False, help='(Optional) Verbose mode')
+    parser.add_argument('--verbose', action='store_true', required=False, help='(Optional) Print debug message if set')
+
+    parser.add_argument('--skip_logging', action='store_true', required=False, help='(Optional) Skip logging info if set. Overwrite `verbose`.')
 
     args = parser.parse_args()
+
     if args.verbose:
         logger.setLevel(logging.DEBUG)
+
+    if args.skip_logging:
+        logging.getLogger().setLevel(logging.WARN)
 
     resize_imgs(args.source_dir, args.output_dir, force=args.force)
     if args.jsonl_path:

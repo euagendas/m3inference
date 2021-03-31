@@ -32,9 +32,9 @@ def get_extension(img_path):
 class M3Twitter(M3Inference):
 
     def __init__(self, cache_dir=expanduser("~/m3/cache"), model_dir=expanduser("~/m3/models/"), pretrained=True,
-                 use_full_model=True, use_cuda=True, parallel=False, seed=0):
+                 use_full_model=True, use_cuda=True, parallel=False, seed=0, skip_logging=False):
         super(M3Twitter, self).__init__(model_dir=model_dir, pretrained=pretrained, use_full_model=use_full_model,
-                                        use_cuda=use_cuda, parallel=parallel, seed=seed)
+                                        use_cuda=use_cuda, parallel=parallel, seed=seed, skip_logging=skip_logging)
         self.cache_dir = cache_dir
         self.twitter_session=None
         if not os.path.isdir(self.cache_dir):

@@ -28,7 +28,7 @@ class M3Inference:
     '''
 
     def __init__(self, model_dir=expanduser("~/m3/models/"), pretrained=True, use_full_model=True, use_cuda=True,
-                 parallel=False, seed=0):
+                 parallel=False, seed=0, skip_logging=False):
         '''
         :param model_dir: the dir to cache/read cacahed model dump
         :param pretrained: whether to load pretrained weight
@@ -36,6 +36,7 @@ class M3Inference:
         :param use_cuda: whether to run on a GPU (effective only when there is a GPU)
         :param parallel: when to use DataParallel to infer on multiple GPUs (effective only when `use_cuda=True` and there are multiple available GPUs).
         :param seed: set random seed for `random`, `numpy.random`, and `torch`
+        :param skip_logging: whether to skip the logger info and tqdm bar
 
         '''
         if seed is not None:
@@ -45,8 +46,12 @@ class M3Inference:
         self.use_full_model = use_full_model
         self.model_type = 'full_model' if self.use_full_model else 'text_model'
         self.model_dir = model_dir
+        self.skip_logging = skip_logging
 
-        logger.info('Version 1.1.3')
+        if self.skip_logging:
+            logging.getLogger().setLevel(logging.WARN)
+
+        logger.info('Version 1.1.4')
         logger.info(f'Running on {self.device.type}.')
 
         if not pretrained:
@@ -122,7 +127,7 @@ class M3Inference:
                                 num_workers=num_workers, pin_memory=True)
         y_pred = []
         with torch.no_grad():
-            for batch in tqdm(dataloader, desc='Predicting...'):
+            for batch in tqdm(dataloader, desc='Predicting...', disable=logging.root.level>=logging.WARN):
                 batch = [i.to(self.device) for i in batch]
                 pred = self.model(batch)
                 y_pred.append([_pred.detach().cpu().numpy() for _pred in pred])
