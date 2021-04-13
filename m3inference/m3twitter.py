@@ -93,6 +93,10 @@ class M3Twitter(M3Inference):
                     download_resize_img(img_path, img_file_resize, img_file_full)
                 else:
                     download_resize_img(img_path, img_file_resize)
+        # check if an error occurred and the image was not downloaded
+        if not os.path.exists(img_file_resize):
+            img_file_resize = TW_DEFAULT_PROFILE_IMG
+
         bio = user["description"]
         if bio == None:
             bio = ""
