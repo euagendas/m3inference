@@ -6,7 +6,7 @@ import glob
 import json
 import logging
 import os
-import urllib.request
+import urllib.request, urllib.error
 from io import BytesIO
 
 from PIL import Image
@@ -29,6 +29,15 @@ def download_resize_img(url, img_out_path, img_out_path_fullsize=None):
                 fh.write(img_data)
     except urllib.error.HTTPError as err:
         logger.warn("Error fetching profile image from Twitter. HTTP error code was {}.".format(err.code))
+        return None
+    except urllib.error.ContentTooShortError:
+        logger.warn("Error fetching profile image from Twitter. The amount of data downloaded is less than the expected amount")
+        return None
+    except (urllib.error.URLError, ValueError) as err:
+        logger.warn("Error fetching profile image from Twitter. {}".format(err))
+        return None
+    except:
+        logger.warn("Unknown Error")
         return None
 
     return resize_img(BytesIO(img_data), img_out_path, force=True,url=url)
