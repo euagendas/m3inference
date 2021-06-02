@@ -51,7 +51,7 @@ class M3Inference:
         if self.skip_logging:
             logging.getLogger().setLevel(logging.WARN)
 
-        logger.info('Version 1.1.4')
+        logger.info('Version 1.1.5')
         logger.info(f'Running on {self.device.type}.')
 
         if not pretrained:
