@@ -23,11 +23,11 @@ class M3InferenceDataset(Dataset):
             entry = DotDict(entry)
             if use_img:
                 self.data.append([entry.id, entry.lang, normalize_space(str(entry.name)),
-                                  normalize_space(str(entry.screen_name)),
+                                  ascii(normalize_space(str(entry.screen_name))),
                                   normalize_url(normalize_space(str(entry.description))), entry.img_path])
             else:
                 self.data.append([entry.id, entry.lang, normalize_space(str(entry.name)),
-                                  normalize_space(str(entry.screen_name)),
+                                  ascii(normalize_space(str(entry.screen_name))),
                                   normalize_url(normalize_space(str(entry.description)))])
 
         logger.info(f'{len(self.data)} data entries loaded.')
