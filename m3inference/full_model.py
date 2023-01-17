@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # @Zijian Wang
 
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
